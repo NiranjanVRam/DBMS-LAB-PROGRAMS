@@ -1,0 +1,280 @@
+									Experiment 13
+						MySQL Stored Procedure Programming III
+
+
+Submitted By,
+Niranjan V Ram
+39, S5 CSE
+
+
+Aim: Practise the creation of cursors, functions and triggers in MySQL.
+
+1. Write a stored procedure using cursor to calculate the total and the percentage of marks of the students in four subjects from the table - Student with the schema given below. 
+STUDENT ( RNO , S1 , S2, S3, S4, total, percentage)
+[Initially table is partially filled except the last two columns. Those columns should be updated from your procedure].
+
+Code:
+delimiter $$
+
+drop procedure if exists student$$
+
+drop table if exists STUDENT$$
+
+create table STUDENT(RNO int,S1 int,S2 int,S3 int,S4 int,total int,percentage float)$$
+
+insert into STUDENT(RNO,S1,S2,S3,S4) values(1,86,78,100,58)$$
+insert into STUDENT(RNO,S1,S2,S3,S4) values(2,72,94,82,76)$$
+insert into STUDENT(RNO,S1,S2,S3,S4) values(3,40,28,64,82)$$
+insert into STUDENT(RNO,S1,S2,S3,S4) values(4,64,58,72,98)$$
+insert into STUDENT(RNO,S1,S2,S3,S4) values(5,82,100,56,74)$$
+
+create procedure student()
+BEGIN
+
+	declare r int;
+	declare a1 int;
+	declare a2 int;
+	declare a3 int;
+	declare a4 int;
+	declare tot int;
+	declare perc float;
+	declare done int default 0;
+	declare cursor1 CURSOR FOR select RNO,S1,S2,S3,S4 from STUDENT;
+    declare continue handler for not found set done=1;
+    
+	OPEN cursor1;
+  
+	loop1:LOOP
+	
+		fetch cursor1 into r,a1,a2,a3,a4;
+		set tot=a1+a2+a3+a4;
+		set perc=tot/4;
+		update STUDENT set total=tot,percentage=perc where rno=r;
+		
+		if done=1 then
+			leave loop1;
+		end if;
+	
+	end loop loop1;
+
+	CLOSE cursor1;
+	
+	select * from STUDENT;
+
+END$$
+
+delimiter ;
+
+Output:
+source student.sql
+select * from STUDENT;
++------+------+------+------+------+-------+------------+
+| RNO  | S1   | S2   | S3   | S4   | total | percentage |
++------+------+------+------+------+-------+------------+
+|    1 |   86 |   78 |  100 |   58 |  NULL |       NULL |
+|    2 |   72 |   94 |   82 |   76 |  NULL |       NULL |
+|    3 |   40 |   28 |   64 |   82 |  NULL |       NULL |
+|    4 |   64 |   58 |   72 |   98 |  NULL |       NULL |
+|    5 |   82 |  100 |   56 |   74 |  NULL |       NULL |
++------+------+------+------+------+-------+------------+
+call student();
++------+------+------+------+------+-------+------------+
+| RNO  | S1   | S2   | S3   | S4   | total | percentage |
++------+------+------+------+------+-------+------------+
+|    1 |   86 |   78 |  100 |   58 |   322 |       80.5 |
+|    2 |   72 |   94 |   82 |   76 |   324 |         81 |
+|    3 |   40 |   28 |   64 |   82 |   214 |       53.5 |
+|    4 |   64 |   58 |   72 |   98 |   292 |         73 |
+|    5 |   82 |  100 |   56 |   74 |   312 |         78 |
++------+------+------+------+------+-------+------------+
+
+
+2. Create a stored function to accept a number and returns its factorial.
+
+Code:
+delimiter $$
+
+create function factorial(n int)
+returns int
+BEGIN
+
+	DECLARE fact int DEFAULT 1;
+	WHILE n>0
+	DO
+		set fact=fact*n;
+		set n=n-1;
+	END WHILE;
+return fact;
+END$$
+
+delimiter ;
+
+Output:
+select factorial(5);
++--------------+
+| factorial(5) |
++--------------+
+|          120 |
++--------------+
+
+
+3. Write a stored function that accepts department number as input argument and returns the total salary of that department using the below schema:
+WORK <EMP_NO, NAME, COMPANY_NAME, JOIN_DATE, DESIGNATION, SALARY, DEPT_NO>
+[First create and populate the WORK table with meaningful values].
+
+Code:
+delimiter $$
+
+drop table if exists WORK$$
+
+drop function if exists workk$$
+
+create table WORK(EMP_NO int,NAME varchar(30),COMPANY_NAME varchar(30),JOIN_DATE date,DESIGNATION varchar(15),SALARY int,DEPT_NO int)$$
+
+insert into WORK values(1,"John","IBM","1987-07-16","Manager",50000,10)$$
+insert into WORK values(2,"Mike","Google","1990-05-24","Manager",50000,5)$$
+insert into WORK values(3,"David","Amazon","1988-12-14","Supervisor",40000,10)$$
+insert into WORK values(4,"Harry","Microsoft","1999-07-01","Team Leader",60000,8)$$
+insert into WORK values(5,"Luke","Google","2000-10-03","Clerk",30000,10)$$
+
+create function workk(dno int)
+returns int
+BEGIN
+	DECLARE ts int;
+	select SUM(SALARY) into ts from WORK where DEPT_NO=dno;
+	return ts;
+END$$
+
+delimiter ;
+
+Output:
+source work.sql
+select workk(10);
++-----------+
+| workk(10) |
++-----------+
+|    120000 |
++-----------+
+
+
+4. Create a trigger that converts all department names into capital letters before inserting to department table. (i.e. even if you give department name using lowercase letters in insert query, that should be inserted as capital letters)
+department(dept-num, dept_name, location, head_of_dept)
+
+Code:
+delimiter $$
+
+drop table if exists department$$
+
+drop trigger if exists upperdepartment$$
+
+create table department(dept_num int,dept_name varchar(20),location varchar(15),head_of_dept varchar(20))$$
+
+insert into department values(10,"sales","New York","Ivan")$$
+insert into department values(4,"development","London","Mike")$$
+insert into department values(7,"support","Alaska","John")$$
+insert into department values(10,"sales","New York","Mike")$$
+insert into department values(7,"support","Alaska","Jake")$$
+
+create trigger upperdepartment
+before insert on department
+for each row
+BEGIN
+	set NEW.dept_name=UPPER(NEW.dept_name);
+END$$
+
+delimiter ;
+
+/*
+insert into department values(4,"development","London","Ram");
+*/
+
+Output:
+source department.sql
+insert into department values(4,"development","London","Ram");
+select * from department;
++----------+-------------+----------+--------------+
+| dept_num | dept_name   | location | head_of_dept |
++----------+-------------+----------+--------------+
+|       10 | sales       | New York | Ivan         |
+|        4 | development | London   | Mike         |
+|        7 | support     | Alaska   | John         |
+|       10 | sales       | New York | Mike         |
+|        7 | support     | Alaska   | Jake         |
+|        4 | DEVELOPMENT | London   | Ram          |
++----------+-------------+----------+--------------+
+
+
+5. Create a trigger in MySQL to log the changes of the employee table. All updations must be tracked and recorded in a table emp_audit_log.
+Employee (emp_num, name, dob, designation)
+Emp_audit_log(audit_id, emp_num, name, change_date, action)
+
+Code:
+delimiter $$
+
+drop table if exists Employee$$
+
+drop table if exists EMP_AUDIT_LOG$$
+
+drop trigger if exists logsupdate$$
+
+drop trigger if exists logsinsert$$
+
+drop trigger if exists logsdelete$$
+
+create table Employee(emp_num int,name varchar(10),dob date,designation varchar(20))$$
+
+insert into Employee values(1,"Jake","1988-06-04","supervisor")$$
+insert into Employee values(2,"John","1982-12-14","team leader")$$
+insert into Employee values(3,"Jill","1987-03-15","developer")$$
+insert into Employee values(4,"Jess","1986-10-23","tester")$$
+insert into Employee values(5,"Jim","1995-01-24","architect")$$
+
+create table EMP_AUDIT_LOG(audit_id int NOT NULL AUTO_INCREMENT,emp_num int,name varchar(30),change_date date,action varchar(10),PRIMARY KEY(audit_id))$$
+
+create trigger logsupdate
+after update on Employee
+for each row
+BEGIN
+	insert into EMP_AUDIT_LOG(emp_num,name,change_date,action) values(OLD.emp_num,OLD.name,NOW(),'UPDATE');
+END$$
+
+create trigger logsinsert
+after insert on Employee
+for each row
+BEGIN
+	insert into EMP_AUDIT_LOG(emp_num,name,change_date,action) values(NEW.emp_num,NEW.name,NOW(),'INSERT');
+END$$
+
+create trigger logsdelete
+after delete on Employee
+for each row
+BEGIN
+	insert into EMP_AUDIT_LOG(emp_num,name,change_date,action) values(OLD.emp_num,OLD.name,NOW(),'DELETE');
+END$$
+
+delimiter ;
+
+/*
+insert into Employee values(6,"Jessica","1999-06-06","developer");
+update Employee set dob="1995-01-26" where emp_num=5;
+delete from Employee where emp_num=6;
+select * from EMP_AUDIT_LOG;
+*/
+
+Output:
+source logs.sql
+insert into Employee values(6,"Jessica","1999-06-06","developer");
+update Employee set dob="1995-01-26" where emp_num=5;
+delete from Employee where emp_num=6;
+select * from EMP_AUDIT_LOG;
++----------+---------+---------+-------------+--------+
+| audit_id | emp_num | name    | change_date | action |
++----------+---------+---------+-------------+--------+
+|        1 |       6 | Jessica | 2022-12-23  | INSERT |
+|        2 |       5 | Jim     | 2022-12-23  | UPDATE |
+|        3 |       6 | Jessica | 2022-12-23  | DELETE |
++----------+---------+---------+-------------+--------+
+
+Submitted By,
+Niranjan V Ram
+39, S5 CSE
