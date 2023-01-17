@@ -1,0 +1,296 @@
+										Experiment 10
+									Built-In Functions
+
+Submitted By,
+Niranjan V Ram
+39, S5 CSE
+
+Aim:
+Familiarize various Built-in functions available in MySQL.
+
+Functions and Codes:
+
+String Functions
+---------------------
+
+1.	ASCII
+It returns the ASCII value of the first character.
+
+Syntax: ASCII(character)
+
+select ASCII(fName) as ASCIIfName from Staff39;
+
++------------+
+| ASCIIfName |
++------------+
+|         77 |
+|         68 |
+|         65 |
+|         83 |
+|         74 |
+|         74 |
++------------+
+
+2.	CHAR_LENGTH
+It returns the length of the string.
+
+Syntax: CHAR_LENGTH(string)
+
+select CHAR_LENGTH("Hello World") as Stringlength;
+
++--------------+
+| Stringlength |
++--------------+
+|           11 |
++--------------+
+
+3.	CONCAT
+It concatenates given strings.
+
+Syntax: CONCAT(expression1, expression2, expression3,...)
+
+select CONCAT("Hello ", "World!") as String;
+
++--------------+
+| String       |
++--------------+
+| Hello World! |
++--------------+
+
+4.	LOWER
+It converts the string into its lower case equivalent.
+
+Syntax: LOWER(text)
+
+select LOWER("Turn THIS into lower CASE") as String;
+
++---------------------------+
+| String                    |
++---------------------------+
+| turn this into lower case |
++---------------------------+
+
+5.	SUBSTRING
+It extracts a substring from a string (start at position 6, extract 3 characters)
+
+Syntax: SUBSTRING(string, start, length)
+
+select SUBSTRING("Take any substring", 6, 3) as String;\
+
++--------+
+| String |
++--------+
+| any    |
++--------+
+
+
+Numeric Functions
+---------------------
+
+1.	COS
+It returns the cosine of a number.
+
+Syntax: COS(number)
+
+select COS(65);
+
++--------------------+
+| COS(65)            |
++--------------------+
+| -0.562453851238172 |
++--------------------+
+
+2.	COUNT()
+It returns the number of records returned by a select query.
+
+Syntax: COUNT(expression)
+
+select COUNT(branchNo) from Staff39;
+
++-----------------+
+| COUNT(branchNo) |
++-----------------+
+|               6 |
++-----------------+
+
+3.	AVG()
+It returns the average value of an expression.
+
+Syntax: AVG(expression)
+
+select AVG(salary) from Staff39;
+
++-------------+
+| AVG(salary) |
++-------------+
+|  17883.5000 |
++-------------+
+
+4.	MAX()
+It returns the maximum value in a set of values.
+
+Syntax: MAX(expression)
+
+select MAX(salary) from Staff39;
+
++-------------+
+| MAX(salary) |
++-------------+
+|       32445 |
++-------------+
+
+5.	MAX()
+It returns the minimum value in a set of values.
+
+Syntax: MIN(expression)
+
+select MIN(salary) from Staff39;
+
++-------------+
+| MIN(salary) |
++-------------+
+|        9270 |
++-------------+
+
+
+Date Functions
+---------------------
+
+1.	CURDATE()
+It returns the current date(in YYYY-MM-DD format)
+
+Syntax: CURDATE()
+
+select CURDATE();
+
++------------+
+| CURDATE()  |
++------------+
+| 2022-12-04 |
++------------+
+
+2.	CURTIME()
+It returns the current time(in HH-MM-SS format)
+
+Syntax: CURTIME()
+
+select CURTIME();
+
++-----------+
+| CURTIME() |
++-----------+
+| 20:03:25  |
++-----------+
+
+3.	CURDATE()
+It returns the number of days between two date values.
+
+Syntax: DATEDIFF(date1, date2)
+
+select DATEDIFF("2022-06-08","2022-05-15");
+
++-------------------------------------+
+| DATEDIFF("2022-06-08","2022-05-15") |
++-------------------------------------+
+|                                  24 |
++-------------------------------------+
+
+4.	DAYNAME()
+It returns the weekday name for a given date.
+
+Syntax: DAYNAME(date)
+
+select DAYNAME("2022-05-04");
+
++-----------------------+
+| DAYNAME("2022-05-04") |
++-----------------------+
+| Wednesday             |
++-----------------------+
+
+5.	WEEKDAY()
+It returns the weekday number for a given date.
+
+Syntax: WEEKDAY(date)
+
+select WEEKDAY("2017-06-15");
+
++-----------------------+
+| WEEKDAY("2017-06-15") |
++-----------------------+
+|                     3 |
++-----------------------+
+
+
+Advanced Functions
+---------------------
+
+1.	BIN()
+It returns the binary value of a number.
+
+Syntax: BIN(number)
+
+select BIN(63);
+
++---------+
+| BIN(63) |
++---------+
+| 111111  |
++---------+
+
+2.	CURRENT_USER()
+It returns the user name and host name for the MySQL account that the server used to authenticate the current client.
+
+Syntax: CURRENT_USER()
+
+select CURRENT_USER();
+
++----------------+
+| CURRENT_USER() |
++----------------+
+| root@localhost |
++----------------+
+
+3.	DATABASE()
+It returns the name of the current database.
+
+Syntax: DATABASE()
+
+select DATABASE();
+
++-------------+
+| DATABASE()  |
++-------------+
+| dreamhome39 |
++-------------+
+
+4.	IF()
+It returns a value if a condition is TRUE, or another value if a condition is FALSE.
+
+Syntax: IF(condition, value_if_true, value_if_false)
+
+select IF(500<1000, "YES", "NO");
+
++---------------------------+
+| IF(500<1000, "YES", "NO") |
++---------------------------+
+| YES                       |
++---------------------------+
+
+5.	VERSION()
+It returns the current version of the MySQL database, as a string.
+
+Syntax: VERSION()
+
+select VERSION();
+
++----------------+
+| VERSION()      |
++----------------+
+| 10.9.4-MariaDB |
++----------------+
+
+
+Submitted By,
+Niranjan V Ram
+39, S5 CSE
