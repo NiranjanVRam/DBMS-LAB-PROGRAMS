@@ -1,0 +1,301 @@
+					Experiment 11 - MySQL Stored Procedure Programming -1
+
+
+Submitted By,
+Niranjan V Ram
+39, S5 CSE
+
+<-------------------------------->
+
+1. a) Write a stored procedure to accept values of a, b and c and display which one is greatest. 
+
+CODE:
+delimiter $$
+
+drop procedure if exists greatof3a$$
+
+create procedure greatof3a(a int,b int,c int)
+begin
+	IF a>b THEN
+		IF a>c THEN
+			select a as greatest;
+		ELSE
+			select c as greatest;
+		END IF;
+	ELSE
+		IF b>c THEN
+			select b as greatest;
+		ELSE
+			select c as greatest;
+		END IF;
+	END IF;
+end$$
+
+delimiter ;
+
+
+OUTPUT:
+call greatof3a(10,20,30);
++----------+
+| greatest |
++----------+
+|       30 |
++----------+
+
+	b) Write a stored procedure to accept values of a, b and c and display which one is greatest with the use of ‘in’ and ‘out’ parameters.
+	
+CODE:
+delimiter $$
+
+drop procedure if exists greatof3b$$
+
+create procedure greatof3b(a int,b int,c int,OUT d int)
+begin
+	IF a>b THEN
+		IF a>c THEN
+			set d=a;
+		ELSE
+			set d=a;
+		END IF;
+	ELSE
+		IF b>c THEN
+			set d=a;
+		ELSE
+			set d=a;
+		END IF;
+	END IF;
+	select @d as greatest;
+end$$
+
+delimiter ;
+
+OUTPUT:
+set @d=50;
+call greatof3b(10,20,30,@d);
++----------+
+| greatest |
++----------+
+|       50 |
++----------+
+
+	c) Write a stored procedure to accept values of a, b and c and display which one is greatest using ‘inout’ parameter.
+
+CODE:
+delimiter $$
+
+drop procedure if exists greatof3c$$
+
+create procedure greatof3c(a int,b int,INOUT @c int)
+begin
+	IF a>b THEN
+		IF a>c THEN
+			set c=a;
+		END IF;
+	ELSE
+		IF b>c THEN
+			set c=b;
+		END IF;
+	END IF;
+	select @c as greatest;
+end$$
+
+delimiter ;
+
+OUTPUT:
+set @c=50;
+call greatof3c(10,20,@c);
++----------+
+| greatest |
++----------+
+|       50 |
++----------+
+
+2. Pass a student mark for one subject as input to a procedure displaying the grade (A to F). (Do using CASE statement)
+
+CODE:
+delimiter $$
+
+drop procedure if exists gradea$$
+
+create procedure gradea(m int)
+begin
+	DECLARE g varchar(5);
+	CASE
+		WHEN m>=90 THEN
+			set g='A';
+		WHEN m>=80 THEN
+			set g='B';
+		WHEN m>=60 THEN
+			set g='C';
+		WHEN m>=50 THEN
+			set g='D';
+		WHEN m>=40 THEN
+			set g='E';
+		WHEN m>=30 THEN
+			set g='F';
+		ELSE
+			select "Invalid input.";
+	END CASE;
+	select g as grade;
+end$$
+
+delimiter ;
+
+OUTPUT:
+call gradea(90);
++-------+
+| grade |
++-------+
+| A     |
++-------+
+
+3. Write a stored procedure to find the sum of ‘n’ natural numbers. (Do using LOOP-END LOOP)
+
+CODE:
+delimiter $$
+
+drop procedure if exists sumofn$$
+
+create procedure sumofn(m int)
+begin
+	DECLARE n int DEFAULT 0;
+	DECLARE g int DEFAULT 0;
+	l1:LOOP
+		set n=n+1;
+		set g=g+n;
+		IF n=m THEN
+			LEAVE l1;
+		END IF;
+	END LOOP l1;
+	select g as sum;
+end$$
+
+delimiter ;
+
+OUTPUT:
+call sumofn(5);
++------+
+| sum  |
++------+
+|   15 |
++------+
+
+4. Write a stored procedure to find the sum of odd numbers up to ‘n’. (Do using REPEAT – UNTIL)
+
+CODE:
+delimiter $$
+
+drop procedure if exists sumofodd$$
+
+create procedure sumofodd(m int)
+begin
+	DECLARE n int DEFAULT 1;
+	DECLARE g int DEFAULT 0;
+	l1:REPEAT
+		set g=g+n;
+		set n=n+2;
+	UNTIL g>m-n
+	END REPEAT l1;
+	select g as sum;
+end$$
+
+delimiter ;
+
+OUTPUT:
+call sumofodd(5);
++------+
+| sum  |
++------+
+|   25 |
++------+
+
+5. Write a stored procedure to find the sum of even numbers up to ‘n’. (Do using WHILE).
+
+CODE:
+delimiter $$
+
+drop procedure if exists sumofeven$$
+
+create procedure sumofeven(m int)
+begin
+	DECLARE n int DEFAULT 2;
+	DECLARE g int DEFAULT 0;
+	WHILE g<m-n DO
+		set g=g+n;
+		set n=n+2;
+	END WHILE;
+	select g as sum;
+end$$
+
+delimiter ;
+
+OUTPUT:
+call sumofeven(26);
++------+
+| sum  |
++------+
+|   20 |
++------+
+
+6. Write a stored procedure to find the number of digits in an input integer.
+
+CODE:
+delimiter $$
+
+drop procedure if exists countdigit$$
+
+create procedure countdigit(n int)
+begin
+  DECLARE g int DEFAULT 0; 
+
+  WHILE n > 0 DO 
+    set n = n / 10; 
+    set g = g + 1; 
+  END WHILE; 
+
+  select g as count; 
+END $$
+
+delimiter ;
+
+OUTPUT:
+source countdigit.sql
+call countdigit(1564);
++-------+
+| count |
++-------+
+|     4 |
++-------+
+
+7. Accept two values ‘a’ and ‘b’ and swap them within a procedure using ‘inout’ parameter.
+
+CODE:
+delimiter $$
+
+drop procedure if exists swap$$
+
+create procedure swap(INOUT a int,INOUT b int)
+begin
+    declare temp int;
+    set temp = a;
+    set a = b;
+    set b = temp;
+end$$
+
+delimiter ;
+
+OUTPUT:
+set @a=20;
+set @b=30;
+call swap(@a,@b);
++------+------+
+| a    | b    |
++------+------+
+|   30 |   20 |
++------+------+
+
+<--------------------------------->
+
+Submitted By,
+Niranjan V Ram
+39, S5 CSE
